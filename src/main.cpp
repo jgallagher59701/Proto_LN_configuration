@@ -66,7 +66,7 @@ enum parameter {
 #define CHANNEL "channel"
 
 // Call this when we expect to read the name of a parameter
-parameter get_parameter() {
+parameter read_parameter() {
     char buffer[MAX_INIT_MSG] = {""};
     unsigned len = Serial.readBytes(buffer, MAX_INIT_MSG);
 
@@ -74,7 +74,7 @@ parameter get_parameter() {
     bool is_interval = buffer_equal(buffer, len, INTERVAL);
     buffer[len] = '\0';
     char msg[128] = {0};
-    snprintf(msg, 128, "get_parameter bytes read: %d, @%s@, is interval: %s", len, buffer, is_interval ? "True": "False");
+    snprintf(msg, 128, "read_parameter bytes read: %d, @%s@, is interval: %s", len, buffer, is_interval ? "True": "False");
     send_msg(msg);
 #endif
 
@@ -98,13 +98,13 @@ parameter get_parameter() {
 }
 
 // Call this when we expect to read an integer value for a parameter
-int get_int_value() {
+int read_int_value() {
     char buffer[MAX_INIT_MSG] = {""};
     unsigned len = Serial.readBytes(buffer, MAX_INIT_MSG);
 
 #if DEBUG
     char msg[128] = {0};
-    snprintf(msg, 128, "get_int_value bytes read: %d, @%d@", len, *(int*)&buffer);
+    snprintf(msg, 128, "read_int_value bytes read: %d, @%d@", len, *(int*)&buffer);
     send_msg(msg);
 #endif
 
@@ -135,8 +135,8 @@ void node_initialization() {
   
     send_msg(CONFIG_MSG);
     if (read_ack()) {
-      parameter p = get_parameter();
-      int32_t value = get_int_value();
+      parameter p = read_parameter();
+      int32_t value = read_int_value();
 
       blink(LED_BUILTIN, 3, 0);
     }
